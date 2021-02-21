@@ -1,0 +1,40 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="bootstrap.min.css">
+  
+  <meta name="author" content="Nicolas Devenet">
+  <meta name="generator" content="Shortener · Nicolas Devenet" />
+  <meta name="robots" content="noindex, nofollow, noarchive">
+
+  <title>Not found · URL Shortener</title>
+</head>
+<body>
+  <nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <div class="container">
+      <a href="." class="navbar-brand">URL Shortener</a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbar">
+        {if="isset($display_menu) && $display_menu"}
+        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+          <li class="nav-item"><a class="nav-link active" href="board.php">Dashboard</a></li>
+        </ul>
+        {/if}
+        <span class="navbar-text ms-auto">Powered by <a href="https://github.com/Devenet/Shortener" rel="external">Shortener</a></span>
+      </div>
+    </div>
+  </nav>
+  
+  <main class="container mb-4">
+    <h1 class="my-2">Not found</h1>
+    <p class="lead">This link in unknow. Sorry.</p>
+  </main>
+  
+  <script src="bootstrap.bundle.min.js"></script>
+  <script src="shortener.js"></script>
+</body>
+</html>

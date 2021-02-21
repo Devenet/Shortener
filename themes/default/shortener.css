@@ -1,0 +1,4 @@
+.font-sm { font-size: small; }
+a.code { text-decoration: none; }
+
+#debug { position: fixed; right: 0; bottom: 0; padding: 5px 10px; font-size: 11px; color: #fff; line-height: 12px; text-align: right; background: #6c757d; border-radius: 5px 0 0 0; }

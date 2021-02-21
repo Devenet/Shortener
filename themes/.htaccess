@@ -1,0 +1,3 @@
+<FilesMatch "\.html$">
+  Redirect 404
+</FilesMatch>

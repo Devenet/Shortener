@@ -1,0 +1,107 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="bootstrap.min.css">
+  <link rel="stylesheet" href="shortener.css">
+  
+  <meta name="author" content="Nicolas Devenet">
+  <meta name="generator" content="Shortener · Nicolas Devenet" />
+  <meta name="robots" content="noindex, nofollow, noarchive">
+
+  <title>Dashboard · URL Shortener</title>
+</head>
+<body>
+  <nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <div class="container">
+      <a href="." class="navbar-brand">URL Shortener</a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbar">
+        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+          <li class="nav-item"><a class="nav-link active" href="board.php">Dashboard</a></li>
+        </ul>
+        <span class="navbar-text">Powered by <a href="https://github.com/Devenet/Shortener" rel="external">Shortener</a></span>
+      </div>
+    </div>
+  </nav>
+  
+  <main class="container mb-4">
+    <div class="my-2">
+      <h1>Dashboard</h1>
+    </div>
+
+    <div class="accordion my-3" id="acc-new">
+      <div class="accordion-item">
+        <h2 class="accordion-header" id="acc-title-newlink">
+          <button class="accordion-button border-primary text-primary {if="!$newlink"}collapsed{/if}" type="button" data-bs-toggle="collapse" data-bs-target="#acc-coll-newlink" aria-expanded="{$newlink ? 'true' : 'false'}" aria-controls="acc-coll-newlink">
+            <span class="me-2">&#128640;</span> New link
+          </button>
+        </h2>
+        <div id="acc-coll-newlink" class="accordion-collapse border-primary collapse {if="$newlink"}show{/if}" aria-labelledby="acc-title-newlink" data-bs-parent="#acc-new">
+          <div class="accordion-body bg-light">
+            {include="board-new"}
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row align-items-center mt-3">
+      <div class="col">
+        <h2>Links</h2>
+      </div>
+      <div class="col-auto ms-auto">
+        <span class="badge bg-primary">{$links_count}</span> links
+      </div>
+    </div>
+    
+    <table class="table table-striped table-hover table-bordered mb-0">
+      <caption>{$links|count} / {$links_count} entries · Page {$pagination_current+1} / {$pagination_last|max:1}</caption>
+      <thead class="table-light">
+        <tr>
+          <th scope="col" class="text-end">Id</th>
+          <th scope="col">↓ Created</th>
+          <th scope="col">Alias</th>
+          <th scope="col" style="max-width: 80%;">URL</th>
+          <th scope="col" class="text-end">Views</th>
+        </tr>
+      </thead>
+      <tbody>
+        {loop="links"}
+        <tr>
+          <th scope="row" class="text-end">{$value['id']}</th>
+          <td>{function="substr($value['created'], 0, 10)"}</td>
+          <td><a href="?c={$value['code']}" class="code"><kbd>{$value['code']}</kbd></a></td>
+          <td style="max-width: 80%;">
+            <span class="text-{$value['disable'] ? 'danger' : 'success'} me-1" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-container="body" title="{$value['disable'] ? 'Disabled' : 'Active'} redirection">◉</span>
+            <small><a href="?c={$value['code']}">{$value['url']}</a></small>
+            <a href="{$value['url']}" title="Open link in new tab" rel="external" class="ms-1 link-dark float-md-end"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-external-link"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg></a>
+          </td>
+          <td class="text-end"><span class="badge rounded-pill bg-secondary">{$value['views']}</span></td>
+        </tr>
+        {/loop}
+      </tbody>
+    </table>
+    
+    {if="count($pagination) > 1"}
+    <nav>
+      <ul class="pagination">
+        <li class="page-item {if=" $pagination_current==0"}disabled{/if}"><a class="page-link" href="?">First</a></li>
+        <!-- <li class="page-item {if="$pagination_current == 0"}disabled{/if}"><a class="page-link" href="?{if="$pagination_current-1 > 0"}page={$pagination_current-1}{/if}">«</a></li> -->
+        {loop="pagination"}<li class="page-item {if="$value == $pagination_current"}active{/if}"><a class="page-link" href="?{if="$value > 0"}page={$value}{/if}">{$value+1}</a></li>{/loop}
+        <!-- <li class="page-item {if="($pagination_current+1) == $pagination_last"}disabled{/if}"><a class="page-link" href="?page={$pagination_current+1}">»</a></li> -->
+        <li class="page-item {if=" $pagination_current==max(0, $pagination_last-1)"}disabled{/if}"><a class="page-link" href="?page={function=" max(0, $pagination_last-1)"}">Last</a></li>
+      </ul>
+    </nav>
+    {/if}
+
+  </main>
+  
+  <div id="debug">v{$version} · {$db_access} db</div>
+  
+  <script src="bootstrap.bundle.min.js"></script>
+  <script src="shortener.js"></script>
+</body>
+</html>

@@ -1,0 +1,95 @@
+<form method="post" action="board.php?new">
+  <div class="row mb-3">
+    <label class="col-lg-2 col-form-label" for="url">URL</label>
+    <div class="col">
+      <input class="form-control {if="isset($errors['url'])"}is-invalid{/if}" name="url" id="url" type="url" maxlength="500" placeholder="https://www.turing.science/alan/very-long-page" required value="{$values['url'] ?? null}">
+      {if="isset($errors['url'])"}<div class="invalid-feedback">{$errors['url']}</div>{/if}
+    </div>
+  </div>
+  
+  <div class="row mb-3">
+    <label class="col-lg-2 col-form-label" for="code">Custom alias</label>
+    <div class="col">
+      <div class="row">
+        <div class="col-auto">
+          <div class="input-group input-group-sm {if="isset($errors['code'])"}has-validation{/if}">
+            <span class="input-group-text">{$domain}/</span>
+            <input class="form-control {if="isset($errors['code'])"}is-invalid{/if}" type="text" name="code" id="code" maxlength="50" value="{$values['code'] ?? null}">
+            {if="isset($errors['code'])"}<div class="invalid-feedback">{$errors['code']}</div>{/if}
+          </div>
+        </div>
+        <div class="col-auto">
+          <span class="form-text">Leave blank for random alias.</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <details class="row mb-4" {if="isset($errors['chars']) || isset($errors['length'])"}open{/if}>
+    <summary class="col-auto offset-md-2">Alias settings</summary>
+    
+    <div class="pt-3">
+      <div class="row mb-2">
+        <div class="col offset-md-2">
+          <div class="form-check">
+            <input class="form-check-input" type="checkbox" name="easy" id="easy" value="on" {if="isset($values) && $values['easy']"}checked{/if}>
+            <label class="form-check-label" for="easy">Easy to read</label>
+            <span class="form-text ms-2">No ambiguous characters.</span>
+          </div>
+        </div>
+      </div>
+
+      <fieldset class="row mb-1">
+        <legend class="col-form-label col-md-2 pt-0">Characters</legend>
+        <div class="col">
+          <div class="form-check form-check-inline">
+            <input class="form-check-input {if="isset($errors['chars'])"}is-invalid{/if}" type="checkbox" id="chars-lower" name="chars[lower]" value="on" {if="isset($values) && $values['chars_lower'] || empty($values)"}checked{/if}>
+            <label class="form-check-label" for="chars-lower">Lower</label>
+          </div>
+          <div class="form-check form-check-inline">
+            <input class="form-check-input {if="isset($errors['chars'])"}is-invalid{/if}" type="checkbox" id="chars-upper" name="chars[upper]" value="on" {if="isset($values) && $values['chars_upper'] || empty($values)"}checked{/if}>
+            <label class="form-check-label" for="chars-upper">Upper</label>
+          </div>
+          <div class="form-check form-check-inline">
+            <input class="form-check-input {if="isset($errors['chars'])"}is-invalid{/if}" type="checkbox" id="chars-digits" name="chars[digits]" value="on" {if="isset($values) && $values['chars_digits'] || empty($values)"}checked{/if}>
+            <label class="form-check-label" for="chars-digits">Digits</label>
+          </div>
+          <div class="form-check form-check-inline {if="isset($errors['chars'])"}is-invalid{/if}">
+            <input class="form-check-input {if="isset($errors['chars'])"}is-invalid{/if}" type="checkbox" id="chars-symbols" name="chars[symbols]" value="on" {if="isset($values) && $values['chars_symbols']"}checked{/if}>
+            <label class="form-check-label" for="chars-symbols">Symbols</label>
+          </div>
+          {if="isset($errors['chars'])"}<div class="invalid-feedback">{$errors['chars']}</div>{/if}
+        </div>
+      </fieldset>
+      
+      <div class="row align-items-center mb-3">
+        <label class="col-md-2 col-form-label" for="length">Length</label>
+        <div class="col-auto">
+          <input class="form-control d-inline {if="isset($errors['length'])"}is-invalid{/if}" type="number" name="length" id="length" min="3" max="50" value="{$values['length'] ?? $default_length}" size="2" style="max-width: {if="isset($errors['length'])"}5.75{else}4.25{/if}em;">
+          <span class="form-text ms-2	">Between 3 and 50.</span>
+          {if="isset($errors['length'])"}<div class="invalid-feedback">{$errors['length']}</div>{/if}
+        </div>
+      </div>
+    </div>
+  </details>
+  
+  <div class="row mb-3">
+    <label class="col-md-2 col-form-label" for="comment">Comment</label>
+    <div class="col">
+      <textarea class="form-control {if="isset($errors['comment'])"}is-invalid{/if}" id="comment" name="comment" maxlength="255">{$values['comment'] ?? null}</textarea>
+      {if="isset($errors['comment'])"}<div class="invalid-feedback">{$errors['comment']}</div>{/if}
+    </div>
+  </div>
+  
+  <div class="row align-items-center">
+    <div class="col-auto offset-md-2">
+      <button type="submit" class="btn btn-primary">Shorten</button>
+    </div>
+    <div class="col-auto">
+      <div class="form-check">
+        <input class="form-check-input" type="checkbox" name="disable" id="disable" {if="isset($values) && $values['disable']"}checked{/if}>
+        <label class="form-check-label" for="disable">Disabled redirection</label>
+      </div>
+    </div>
+  </div>
+</form>
