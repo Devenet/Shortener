@@ -75,7 +75,7 @@
       <div class="row mb-3">
         <label class="col-md-2 col-form-label" for="code">
           Alias
-          <a href="http://{$domain}/{$link['code']}" rel="external" class="ms-1 align-text-bottom float-md-end">
+          <a href="{$domain_scheme}://{$domain}/{$link['code']}" rel="external" class="ms-1 align-text-bottom float-md-end">
             <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-external-link"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
           </a>
         </label>
@@ -158,7 +158,7 @@
           <th scope="row" class="text-end">{$value['id']}</th>
           <td style="max-width: 200px;">{$value['created']}</td>
           <td>
-            {if="!empty($value['ip_hash'])"}<code style="color:#{function=" substr($value['ip_hash'], 0, 6)"};" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-container="body" title="{$value['ip_hash']}">{function="substr($value['ip_hash'], 0, 8)"}</code>
+            {if="!empty($value['ip_hash'])"}<code style="color:#{function="substr($value['ip_hash'], 0, 6)"};" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-container="body" title="{$value['ip_hash']}">{function="substr($value['ip_hash'], 0, 8)"}</code>
             {else}<i class="text-muted font-sm">unknown</i>{/if}
           </td>
           <td style="min-width: 35%;">
@@ -197,7 +197,7 @@
     document.getElementById('m-delete-button').addEventListener('click', function (e) { e.preventDefault(); return; });
     document.getElementById('btn_copy').addEventListener('click', function(e) {
       var tooltip = bootstrap.Tooltip.getInstance(e.srcElement), input = document.createElement('input');
-      input.value = "{$domain}/{$link['code']}";
+      input.value = "{$domain_scheme}://{$domain}/{$link['code']}";
       input.style.position = 'fixed';
       input.style.top = 0;
       input.style.left = '-9999px';

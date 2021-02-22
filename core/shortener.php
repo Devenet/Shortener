@@ -19,6 +19,7 @@ class Shortener
 
   private $template;
   private $domain;
+  private $domain_scheme;
   private $default_length;
 
   function __construct()
@@ -34,9 +35,11 @@ class Shortener
     $this->default_length = $config['default_code_length'] ?? 6;
     $this->domain = $config['domain'] ?? $_SERVER['HTTP_HOST'] . dirname($_SERVER['SCRIPT_NAME']);
     $this->domain = self::RemoveTrailingSlash($this->domain);
+    $this->domain_scheme = $_SERVER['REQUEST_SCHEME'] ?? 'http';
 
     $this->template = new RainTPL();
     $this->assign('domain', $this->domain);
+    $this->assign('domain_scheme', $this->domain_scheme);
     $this->assign('default_length', $this->default_length);
   }
 
