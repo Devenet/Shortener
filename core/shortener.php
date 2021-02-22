@@ -14,7 +14,7 @@ use PDO;
 
 class Shortener
 {
-  public const VERSION = '1.0.0';
+  public const VERSION = '1.1.0';
   public const PAGINATION = 15;
 
   private $template;
