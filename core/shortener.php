@@ -33,6 +33,7 @@ class Shortener
 
     $this->default_length = $config['default_code_length'] ?? 6;
     $this->domain = $config['domain'] ?? $_SERVER['HTTP_HOST'] . dirname($_SERVER['SCRIPT_NAME']);
+    $this->domain = self::RemoveTrailingSlash($this->domain);
 
     $this->template = new RainTPL();
     $this->assign('domain', $this->domain);
@@ -230,5 +231,13 @@ class Shortener
   public static function EndsWith($content, $search)
   {
     return strcasecmp(substr($content, strlen($content) - strlen($search)), $search) === 0;
+  }
+
+  private static function RemoveTrailingSlash($content)
+  {
+    if (self::EndsWith($content, '/'))
+      return substr($content, 0, -1);
+    
+    return $content;
   }
 }
