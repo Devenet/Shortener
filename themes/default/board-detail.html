@@ -83,7 +83,7 @@
           <div class="input-group">
             <span class="input-group-text">{$domain}/</span>
             <input class="form-control font-monospace" type="text" name="code" id="code" maxlength="50" value="{$link['code']}" readonly>
-            <!--<button class="btn btn-outline-primary" id="btn_copy" type="button">Copy link</button>-->
+            <button class="btn btn-outline-primary" id="btn_copy" type="button" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-container="body" data-bs-original-title="">Copy link</button>
           </div>
         </div>
       </div>
@@ -195,6 +195,29 @@
   <script src="shortener.js"></script>
   <script>
     document.getElementById('m-delete-button').addEventListener('click', function (e) { e.preventDefault(); return; });
+    document.getElementById('btn_copy').addEventListener('click', function(e) {
+      var tooltip = bootstrap.Tooltip.getInstance(e.srcElement), input = document.createElement('input');
+      input.value = "{$domain}/{$link['code']}";
+      input.style.position = 'fixed';
+      input.style.top = 0;
+      input.style.left = '-9999px';
+      document.body.appendChild(input);
+      input.focus();
+      input.select();
+      try {
+        document.execCommand('copy');
+        e.srcElement.setAttribute('data-bs-original-title', 'Copied!');
+        tooltip.show();
+      }
+      catch (ex) {
+        e.srcElement.setAttribute('data-bs-original-title', 'Impossible to copy to clipboard.');
+        tooltip.show();
+      }
+      finally {
+        document.body.removeChild(input);
+        e.srcElement.setAttribute('data-bs-original-title', '');
+      }
+    });
   </script>
 </body>
 </html>
