@@ -48,7 +48,7 @@
       </h1>
       <small class="text-muted text-end">
         <span class="d-none d-md-inline">Created on</span>
-        <span data-bs-toggle="tooltip" data-bs-placement="left" data-bs-container="body" title="{$link['created']}">{function="substr($link['created'], 0, 10)"}</span>
+        <span data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-container="body" title="{$link['created']}">{function="substr($link['created'], 0, 10)"}</span>
       </small>
     </div>
 
@@ -146,9 +146,9 @@
       <thead class="table-light">
         <tr>
           <th scope="col" class="text-end">Id</th>
-          <th scope="col" style="max-width: 200px;">↓ Visited</th>
+          <th scope="col">↓ Visited</th>
           <th scope="col">Visitor</th>
-          <th scope="col" style="min-width: 35%;">Source</th>
+          <th scope="col">Source</th>
           <th scope="col">User agent</th>
         </tr>
       </thead>
@@ -156,12 +156,12 @@
         {loop="views"}
         <tr>
           <th scope="row" class="text-end">{$value['id']}</th>
-          <td style="max-width: 200px;">{$value['created']}</td>
+          <td>{$value['created']}</td>
           <td>
-            {if="!empty($value['ip_hash'])"}<code style="color:#{function="substr($value['ip_hash'], 0, 6)"};" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-container="body" title="{$value['ip_hash']}">{function="substr($value['ip_hash'], 0, 8)"}</code>
+            {if="!empty($value['ip_hash'])"}<code style="color:#{function="substr($value['ip_hash'], 0, 6)"};" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-container="body" title="{$value['ip_hash']}">{function="substr($value['ip_hash'], 0, 8+2)"}</code>
             {else}<i class="text-muted font-sm">unknown</i>{/if}
           </td>
-          <td style="min-width: 35%;">
+          <td>
             {if="!empty($value['referer'])"}
             <details>
               <summary>{$value['referer_host']}</summary>
@@ -169,7 +169,7 @@
             </details>
             {else}<i class="text-muted font-sm">unknown</i>{/if}
           </td>
-          <td><small>{$value['user_agent']}</small></td>
+          <td class="text-truncate" style="max-width: 150px;"><small data-bs-toggle="tooltip" data-bs-placement="left" data-bs-container="body" title="{$value['user_agent']}">{$value['user_agent']}</small></td>
         </tr>
         {/loop}
       </tbody>

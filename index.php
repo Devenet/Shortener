@@ -23,20 +23,12 @@ if (!empty($_GET['c']))
         $referer = htmlspecialchars(trim($_SERVER['HTTP_REFERER']));
         $referer_host = parse_url($referer, PHP_URL_HOST);
 
-        header('Refer: ' . $referer);
+        // Useless, but you know, just in case.
+        header('Referer: ' . $referer);
       }
       if (!empty($_SERVER['HTTP_USER_AGENT']))
       {
-        $ua = new UserAgent(htmlspecialchars(trim($_SERVER['HTTP_USER_AGENT'])));
-        $ua_os = $ua->osPlatform;
-        $ua_browser = $ua->browserName;
-        $ua_browser_version = $ua->browserVersion;
-
-        $user_agent = null;
-        if (!empty($ua_os)) $user_agent = $ua_os;
-        if (!empty($ua_browser)) $user_agent .= (!empty($ua_os) ? ' / ' : null) . $ua_browser;
-        if (!empty($ua_browser) && !empty($ua_browser_version)) $user_agent .= ' (' . $ua_browser_version . ')';
-        $ua = $ua->string;
+        $user_agent = htmlspecialchars(trim($_SERVER['HTTP_USER_AGENT']));
       }
       $ip_hash = sha1($_SERVER['REMOTE_ADDR'] . ($user_agent ?? null));
 
@@ -45,7 +37,7 @@ if (!empty($_GET['c']))
         $ip_hash ?? null,
         $referer_host ?? null,
         $referer ?? null,
-        $user_agent ?? $ua ?? null
+        $user_agent ?? null
       );
     }
     catch (\Exception $e)
