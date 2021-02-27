@@ -65,7 +65,7 @@ class Shortener
       } while ($try++ < 3);
     }
 
-    $query = Db::Instance()->prepare('insert into link(code, url, disable, comment) values(:code, :url, :disable, :comment)');
+    $query = Db::Instance()->prepare('insert into shtnr_link(code, url, disable, comment) values(:code, :url, :disable, :comment)');
     $query->execute(array(
       'code' => $code,
       'url' => $url,
@@ -78,7 +78,7 @@ class Shortener
   }
   public function updateLink($id, $disable, $comment)
   {
-    $query = Db::Instance()->prepare('update link set disable = :disable, comment = :comment where id = :id');
+    $query = Db::Instance()->prepare('update shtnr_link set disable = :disable, comment = :comment where id = :id');
     $query->execute(array(
       'id' => $id,
       'disable' => +$disable,
@@ -90,7 +90,7 @@ class Shortener
   }
   public function countLinks()
   {
-    $query = Db::Instance()->query('select count(id) as total from link');
+    $query = Db::Instance()->query('select count(id) as total from shtnr_link');
     $data = $query->fetch();
     $query->closeCursor();
 
@@ -100,7 +100,7 @@ class Shortener
   {
     if (empty($code)) return null;
 
-    $query = Db::Instance()->prepare('select id, created, code, url, disable, comment from link where code = ?');
+    $query = Db::Instance()->prepare('select id, created, code, url, disable, comment from shtnr_link where code = ?');
     $query->execute(array($code));
     $data = $query->fetch();
     $query->closeCursor();
@@ -111,7 +111,7 @@ class Shortener
   {
     if (empty($code)) return null;
 
-    $query = Db::Instance()->prepare('select id, url from link where code = ? and disable = 0');
+    $query = Db::Instance()->prepare('select id, url from shtnr_link where code = ? and disable = 0');
     $query->execute(array($code));
     $data = $query->fetch();
     $query->closeCursor();
@@ -121,7 +121,7 @@ class Shortener
   public function getLinks($page = 0)
   {
     $query = Db::Instance()->prepare('select l.id, l.created, l.code, l.url, l.disable, l.comment, count(v.id) as views
-      from link l left outer join view v on l.id = v.link_id
+      from shtnr_link l left outer join shtnr_view v on l.id = v.link_id
       group by l.id order by l.created desc
       limit :offset, :pagination');
     $query->bindValue('offset', $page * self::PAGINATION, PDO::PARAM_INT);
@@ -139,7 +139,7 @@ class Shortener
   {
     if (empty($url)) return array();
 
-    $query = Db::Instance()->prepare('select id, code from link where url = ?');
+    $query = Db::Instance()->prepare('select id, code from shtnr_link where url = ?');
     $query->execute(array($url));
     $data = $query->fetchAll();
     $query->closeCursor();
@@ -150,7 +150,7 @@ class Shortener
   {
     if (empty($id)) return;
 
-    $query = Db::Instance()->prepare('delete from link where id = ?');
+    $query = Db::Instance()->prepare('delete from shtnr_link where id = ?');
     $query->execute(array($id));
     $query->closeCursor();
 
@@ -161,7 +161,7 @@ class Shortener
   {
     if (empty($link_id)) return;
 
-    $query = Db::Instance()->prepare('insert into view(link_id, ip_hash, referer_host, referer, user_agent) values(:id, :ip, :host, :referer, :ua)');
+    $query = Db::Instance()->prepare('insert into shtnr_view(link_id, ip_hash, referer_host, referer, user_agent) values(:id, :ip, :host, :referer, :ua)');
     $query->execute(array(
       'id' => $link_id,
       'ip' => substr($ip_hash, 0, 32),
@@ -179,7 +179,7 @@ class Shortener
 
     // No CTE supported in MySQL < 8.0 although it is OK for MariaDB and SQLite…
     $query = Db::Instance()->prepare('select count(c.counts) as unique_counts, coalesce(sum(c.counts), 0) as counts
-      from (select count(id) as counts from view where link_id = ? group by ip_hash) c');
+      from (select count(id) as counts from shtnr_view where link_id = ? group by ip_hash) c');
     $query->execute(array($link_id));
     $data = $query->fetch();
     $query->closeCursor();
@@ -191,7 +191,7 @@ class Shortener
     if (empty($link_id)) return null;
 
     $query = Db::Instance()->prepare('select id, created, ip_hash, referer_host, referer, user_agent
-      from view where link_id = :link_id order by created desc
+      from shtnr_view where link_id = :link_id order by created desc
       limit :offset, :pagination');
     $query->bindValue('link_id', $link_id);
     $query->bindValue('offset', $page * self::PAGINATION, PDO::PARAM_INT);
