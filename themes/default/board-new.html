@@ -3,7 +3,12 @@
     <label class="col-lg-2 col-form-label" for="url">URL</label>
     <div class="col">
       <input class="form-control {if="isset($errors['url'])"}is-invalid{/if}" name="url" id="url" type="url" maxlength="500" placeholder="https://www.turing.science/alan/very-long-page" required value="{$values['url'] ?? null}">
-      {if="isset($errors['url'])"}<div class="invalid-feedback">{$errors['url']}</div>{/if}
+      {if="isset($errors['url'])"}
+      <div class="invalid-feedback">
+        {$errors['url']}
+        {if="isset($errors['url_confirmation'])"}<div class="form-check"><input class="form-check-input" type="checkbox" id="force_url" name="force_url"> <label class="form-check-label" for="force_url">Continue anyway</label></div>{/if}
+      </div>  
+      {/if}
     </div>
   </div>
   

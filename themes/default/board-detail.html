@@ -40,7 +40,7 @@
 
   <main class="container mb-4">
     <div class="my-2 d-flex justify-content-between align-items-center">
-      <h1>
+      <h1 class="my-0">
         <span>
           <span class="text-{$link['disable'] ? 'danger' : 'success'} me-1" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-container="body" title="{$link['disable'] ? 'Disabled' : 'Active'} redirection">◉</span>
           Link #{$link['id']}
@@ -59,8 +59,8 @@
     </div>
     {/if}
 
-    <form method="post" class="border border-1 rounded my-3 p-3">
-      <div class="row mb-2">
+    <form method="post" action="board.php?c={$link['code']}" class="border border-1 rounded my-3 p-3">
+      <div class="row mb-3">
         <label class="col-md-2 col-form-label" for="url">
           URL
           <a href="{$link['url']}" rel="external" class="ms-1 align-text-bottom float-md-end">
@@ -68,7 +68,13 @@
           </a>
         </label>
         <div class="col">
-          <input class="form-control" name="url" id="url" type="url" maxlength="500" placeholder="https://www.devenet.eu/very-long-page" required value="{$link['url']}" readonly>
+          <input class="form-control {if="isset($errors['url'])"}is-invalid{/if}" name="url" id="url" type="url" maxlength="500" placeholder="{$link['url']}" required value="{if="isset($errors['url'])"}{$values['url']}{else}{$link['url']}{/if}">
+          {if="isset($errors['url'])"}
+          <div class="invalid-feedback">
+            {$errors['url']}
+            {if="isset($errors['url_confirmation'])"}<div class="form-check"><input class="form-check-input" type="checkbox" id="force_url" name="force_url"> <label class="form-check-label" for="force_url">Continue anyway</label></div>{/if}
+          </div>
+          {/if}
         </div>
       </div>
 
@@ -91,7 +97,8 @@
       <div class="row mb-3">
         <label class="col-md-2 col-form-label" for="comment">Comment</label>
         <div class="col">
-          <textarea class="form-control" id="comment" name="comment" maxlength="255" rows="2">{$link['comment']}</textarea>
+          <textarea class="form-control {if="isset($errors['comment'])"}is-invalid{/if}" id="comment" name="comment" maxlength="255" rows="2">{if="isset($errors['comment'])"}{$values['comment']}{else}{$link['comment']}{/if}</textarea>
+          {if="isset($errors['comment'])"}<div class="invalid-feedback">{$errors['comment']}</div>{/if}
         </div>
       </div>
 
@@ -141,39 +148,41 @@
       </div>
     </div>
 
-    <table class="table table-sm table-striped table-hover table-bordered mb-0">
-      <caption>{$views|count} / {$views_count} entries · Page {$pagination_current+1} / {$pagination_last|max:1}</caption>
-      <thead class="table-light">
-        <tr>
-          <th scope="col" class="text-end">Id</th>
-          <th scope="col">↓ Visited</th>
-          <th scope="col">Visitor</th>
-          <th scope="col">Source</th>
-          <th scope="col">User agent</th>
-        </tr>
-      </thead>
-      <tbody>
-        {loop="views"}
-        <tr>
-          <th scope="row" class="text-end">{$value['id']}</th>
-          <td>{$value['created']}</td>
-          <td>
-            {if="!empty($value['ip_hash'])"}<code style="color:#{function="substr($value['ip_hash'], 0, 6)"};" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-container="body" title="{$value['ip_hash']}">{function="substr($value['ip_hash'], 0, 8+2)"}</code>
-            {else}<i class="text-muted font-sm">unknown</i>{/if}
-          </td>
-          <td>
-            {if="!empty($value['referer'])"}
-            <details>
-              <summary>{$value['referer_host']}</summary>
-              <small><a href="{$value['referer']}" rel="external">{$value['referer']}</a></small>
-            </details>
-            {else}<i class="text-muted font-sm">unknown</i>{/if}
-          </td>
-          <td class="text-truncate" style="max-width: 150px;"><small data-bs-toggle="tooltip" data-bs-placement="left" data-bs-container="body" title="{$value['user_agent']}">{$value['user_agent']}</small></td>
-        </tr>
-        {/loop}
-      </tbody>
-    </table>
+    <div class="table-responsive">
+      <table class="table table-sm table-striped table-hover table-bordered mb-0">
+        <caption>{$views|count} / {$views_count} entries · Page {$pagination_current+1} / {$pagination_last|max:1}</caption>
+        <thead class="table-light">
+          <tr>
+            <th scope="col" class="text-center">#</th>
+            <th scope="col">↓ Visited</th>
+            <th scope="col">Visitor</th>
+            <th scope="col">Source</th>
+            <th scope="col">User agent</th>
+          </tr>
+        </thead>
+        <tbody>
+          {loop="views"}
+          <tr>
+            <th scope="row" class="text-center">{$value['id']}</th>
+            <td style="min-width: 100px;">{$value['created']}</td>
+            <td>
+              {if="!empty($value['ip_hash'])"}<code style="color:#{function="substr($value['ip_hash'], 0, 6)"};" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-container="body" title="{$value['ip_hash']}">{function="substr($value['ip_hash'], 0, 8+2)"}</code>
+              {else}<i class="text-muted font-sm">unknown</i>{/if}
+            </td>
+            <td style="min-width: 100px;">
+              {if="!empty($value['referer'])"}
+              <details>
+                <summary>{$value['referer_host']}</summary>
+                <small><a href="{$value['referer']}" rel="external">{$value['referer']}</a></small>
+              </details>
+              {else}<i class="text-muted font-sm">unknown</i>{/if}
+            </td>
+            <td class="text-truncate" style="max-width: 250px;"><small data-bs-toggle="tooltip" data-bs-placement="left" data-bs-container="body" title="{$value['user_agent']}">{$value['user_agent']}</small></td>
+          </tr>
+          {/loop}
+        </tbody>
+      </table>
+    </div>
 
     {if="count($pagination) > 1"}
     <nav>

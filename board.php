@@ -7,6 +7,7 @@ require dirname(__FILE__).'/core/autoload.php';
 
 $s = new Shortener();
 
+// New link
 if (isset($_GET['new']) && !empty($_POST) && !empty($_POST['url']))
 {
   /* Inspired by
@@ -25,77 +26,17 @@ if (isset($_GET['new']) && !empty($_POST) && !empty($_POST['url']))
   $comment = htmlspecialchars(trim($_POST['comment']));
   $disable = isset($_POST['disable']) && $_POST['disable'] == "on";
   
-  $scheme = parse_url($url, PHP_URL_SCHEME);
-  $host = parse_url($url, PHP_URL_HOST);
   $code_chars = [];
   if ($chars_lower) { $code_chars[] = Generator::CHARS_LOWER; }
   if ($chars_upper) { $code_chars[] = Generator::CHARS_UPPER; }
   if ($chars_digits) { $code_chars[] = Generator::CHARS_DIGITS; }
   if ($chars_symbols) { $code_chars[] = Generator::CHARS_SYMBOLS; }
-  
-  if (empty($scheme) || !in_array(strtolower($scheme), ['http', 'https']))
-  {
-    $errors['url'] = 'URL must start with <code>http</code> or <code>https</code>.';
-  }
-  else if (in_array($host, ['localhost', '127.0.0.1', 'about:blank']))
-  {
-    $errors['url'] = 'URL can’t be localhost.';
-  }
-  else if (filter_var($host, FILTER_VALIDATE_IP) !== false && filter_var($host, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE) === false)
-  {
-    $errors['url'] = 'URL can’t be a private or reserved IP address.';
-  }
-  else if (filter_var(htmlentities($url), FILTER_VALIDATE_URL) === false)
-  {
-    $errors['url'] = 'URL is <b>not</b> considered valid. Check your input.';
-  }
-  else if (Shortener::StartsWith($host, $s->getDomain()) && !isset($_POST['force_selfdomain']))
-  {
-    $errors['url'] = 'URL is already a shorten URL.';
-  }
-  else if (strlen($url) > 500)
-  {
-    $errors['url'] = 'Holy crap. URL is too long to be stored in database (maximum of 500 characters).';
-  }
-  
-  $links = $s->getLinksFromUrl($url);
-  if (count($links) > 0 && !isset($_POST['force_url']))
-  {
-    $links_code = implode(', ', array_map(function($link) { global $s; return '<a href="board.php?c='.$link['code'].'">'.$s->getDomain().'/'.$link['code'].'</a>'; }, $links));
-    $errors['url'] = 'URL is already shorten with '.$links_code.'.';
-  }
-  
-  if (empty($code))
-  {
-    if (empty($code_length) || $code_length < 3 || $code_length > 50)
-    {
-      $errors['length'] = 'Length must be between 3 and 50 charcaters.';
-    }
-    
-    if (count($code_chars) == 0)
-    {
-      $errors['chars'] = 'At least one type of characters must be selected.';
-    }
-  }
-  else
-  {
-    if (Shortener::EndsWith($code, '.') || Shortener::EndsWith($code, ',') || Shortener::EndsWith($code, '(') || Shortener::EndsWith($code, ')'))
-    {
-      $errors['code'] = 'Custom alias can not end with <code>.</code>, <code>,</code>, <code>(</code> or <code>)</code>.';
-    }
-    
-    $link = $s->getLink($code);
-    if ($link)
-    {
-      $errors['code'] = 'This alias is already used. Choose another.';
-    }
-  }
 
-  if (!empty($_POST['comment']) && strlen($_POST['comment']) > 255)
-  {
-    $errors['comment'] = 'The comment must be less than 255 characters.';
-  }
+  $errors = array();
   
+  checkGivenUrl($url, $s, $errors);
+  checkGivenCode($code, $s, $code_length, $code_chars, $errors);
+  checkGivenComment($errors);
   
   if (empty($errors))
   {
@@ -126,6 +67,7 @@ if (isset($_GET['new']) && !empty($_POST) && !empty($_POST['url']))
     'disable' => $disable
   ));
 }
+// Link details
 else if (!empty($_GET['c']))
 {
   $code = htmlspecialchars(trim($_GET['c']));
@@ -133,7 +75,8 @@ else if (!empty($_GET['c']))
   
   if ($link)
   {
-    if (!empty($_POST))
+    // Edit link
+    if (!empty($_POST) && !empty($_POST['url']))
     {
       if (!empty($_POST['delete']) && $_POST['delete'] == md5($link['code']))
       {
@@ -142,23 +85,24 @@ else if (!empty($_GET['c']))
         exit;
       }
 
+      $url = htmlspecialchars(trim($_POST['url']));
       $comment = htmlspecialchars(trim($_POST['comment']));
       $disable = isset($_POST['disable']) && $_POST['disable'] == "on";
 
-      if (!empty($_POST['comment']) && strlen($_POST['comment']) > 255)
-      {
-        $errors['comment'] = 'The comment must be less than 255 characters.';
-      }
+      $errors = array();
+      checkGivenUrl($url, $s, $errors, $link['id']);
+      checkGivenComment($errors);
 
       if (empty($errors))
       {
-        $s->updateLink($link['id'], $disable, $comment);
+        $s->updateLink($link['id'], $url, $disable, $comment);
         header('Location: board.php?c='.$link['code'].'&updated');
         exit;	
       }
 
       $s->assign('errors', $errors);
       $s->assign('values', array(
+        'url' => $url,
         'comment' => $comment,
         'disable' => $disable
       ));
@@ -209,3 +153,81 @@ $s->assign('pagination_last', $last_page);
 $s->assign('pagination', Shortener::getSiblingPages($page, $last_page));
 $s->draw('board-list');
 exit;
+
+
+// Functions to check user input
+function checkGivenUrl($url, $s, &$errors, $excludedId = null)
+{
+  $scheme = parse_url($url, PHP_URL_SCHEME);
+  $host = parse_url($url, PHP_URL_HOST);
+
+  $duplicatedLinks = $s->getLinksFromUrl($url, $excludedId);
+
+  if (empty($scheme) || !in_array(strtolower($scheme), ['http', 'https']))
+  {
+    $errors['url'] = 'URL must start with <code>http</code> or <code>https</code>.';
+  }
+  else if (in_array($host, ['localhost', '127.0.0.1', 'about:blank']))
+  {
+    $errors['url'] = 'URL can’t be localhost.';
+  }
+  else if (filter_var($host, FILTER_VALIDATE_IP) !== false && filter_var($host, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE) === false)
+  {
+    $errors['url'] = 'URL can’t be a private or reserved IP address.';
+  }
+  else if (filter_var(htmlentities($url), FILTER_VALIDATE_URL) === false)
+  {
+    $errors['url'] = 'URL is <b>not</b> considered valid. Check your input.';
+  }
+  else if (strlen($url) > 500)
+  {
+    $errors['url'] = 'Holy crap. URL is too long to be stored in database (maximum of 500 characters).';
+  }
+  else if (Shortener::StartsWith($host, $s->getDomain()) && !isset($_POST['force_url']))
+  {
+    $errors['url'] = 'URL is already a shorten link of this domain.';
+    $errors['url_confirmation'] = true;
+  }
+  else if (count($duplicatedLinks) > 0 && !isset($_POST['force_url']))
+  {
+    $links_code = implode(', ', array_map(function($link) { global $s; return '<a href="board.php?c='.$link['code'].'">'.$s->getDomain().'/'.$link['code'].'</a>'; }, $duplicatedLinks));
+    $errors['url'] = 'URL is already shorten with '.$links_code.'.';
+    $errors['url_confirmation'] = true;
+  }
+  /* Note: case not well handled when given URL is both self domain and duplicated. */
+}
+function checkGivenCode($code, $s, $code_length, $code_chars, &$errors)
+{
+  if (empty($code))
+  {
+    if (empty($code_length) || $code_length < 3 || $code_length > 50)
+    {
+      $errors['length'] = 'Length must be between 3 and 50 charcaters.';
+    }
+    
+    if (count($code_chars) == 0)
+    {
+      $errors['chars'] = 'At least one type of characters must be selected.';
+    }
+  }
+  else
+  {
+    if (Shortener::EndsWith($code, '.') || Shortener::EndsWith($code, ',') || Shortener::EndsWith($code, '(') || Shortener::EndsWith($code, ')'))
+    {
+      $errors['code'] = 'Custom alias can not end with <kbd>.</kbd>, <kbd>,</kbd>, <kbd>(</kbd> or <kbd>)</kbd>.';
+    }
+    
+    $link = $s->getLink($code);
+    if ($link)
+    {
+      $errors['code'] = 'This alias is already used. Choose another one.';
+    }
+  }
+}
+function checkGivenComment(&$errors)
+{
+  if (!empty($_POST['comment']) && strlen($_POST['comment']) > 255)
+  {
+    $errors['comment'] = 'The comment must be less than 255 characters.';
+  }
+}

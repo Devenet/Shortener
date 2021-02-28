@@ -71,23 +71,23 @@
       <caption>{$links|count} / {$links_count} entries · Page {$pagination_current+1} / {$pagination_last|max:1}</caption>
       <thead class="table-light">
         <tr>
-          <th scope="col" class="text-end">Id</th>
+          <th scope="col" class="text-center">#</th>
           <th scope="col">↓ Created</th>
           <th scope="col">Alias</th>
           <th scope="col" style="max-width: 80%;">URL</th>
-          <th scope="col" class="text-end">Views</th>
+          <th scope="col">Views</th>
         </tr>
       </thead>
       <tbody>
         {loop="links"}
         <tr>
-          <th scope="row" class="text-end">{$value['id']}</th>
+          <th scope="row" class="text-center"><a href="?c={$value['code']}" class="link-dark text-decoration-none">{$value['id']}</a></th>
           <td>{function="substr($value['created'], 0, 10)"}</td>
           <td><a href="?c={$value['code']}" class="code"><kbd>{$value['code']}</kbd></a></td>
           <td style="max-width: 80%;">
             <span class="text-{$value['disable'] ? 'danger' : 'success'} me-1" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-container="body" title="{$value['disable'] ? 'Disabled' : 'Active'} redirection">◉</span>
             <small><a href="?c={$value['code']}">{$value['url']}</a></small>
-            <a href="{$value['url']}" title="Open link in new tab" rel="external" class="ms-1 link-dark float-md-end"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-external-link"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg></a>
+            <!-- <a href="{$value['url']}" title="Open link in new tab" rel="external" class="ms-1 link-dark float-md-end"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-external-link"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg></a> -->
           </td>
           <td class="text-end"><span class="badge rounded-pill bg-secondary">{$value['views']}</span></td>
         </tr>

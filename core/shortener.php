@@ -76,11 +76,12 @@ class Shortener
 
     return $code;
   }
-  public function updateLink($id, $disable, $comment)
+  public function updateLink($id, $url, $disable, $comment)
   {
-    $query = Db::Instance()->prepare('update shtnr_link set disable = :disable, comment = :comment where id = :id');
+    $query = Db::Instance()->prepare('update shtnr_link set url = :url, disable = :disable, comment = :comment where id = :id');
     $query->execute(array(
       'id' => $id,
+      'url' => $url,
       'disable' => +$disable,
       'comment' => $comment,
     ));
@@ -135,12 +136,12 @@ class Shortener
 
     return $results;
   }
-  public function getLinksFromUrl($url)
+  public function getLinksFromUrl($url, $excludedId = null)
   {
     if (empty($url)) return array();
 
-    $query = Db::Instance()->prepare('select id, code from shtnr_link where url = ?');
-    $query->execute(array($url));
+    $query = Db::Instance()->prepare('select id, code from shtnr_link where url = ? and id <> ?');
+    $query->execute(array($url, $excludedId ?? -1));
     $data = $query->fetchAll();
     $query->closeCursor();
 
@@ -238,7 +239,7 @@ class Shortener
 
   private static function RemoveTrailingSlash($content)
   {
-    if (self::EndsWith($content, '/'))
+    if (self::EndsWith($content, '/') || self::EndsWith($content, '\\'))
       return substr($content, 0, -1);
     
     return $content;
