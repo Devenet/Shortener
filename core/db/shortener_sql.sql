@@ -1,4 +1,4 @@
-/* v1.0.0 */
+/* v1.1.0 */
 
 SET NAMES utf8;
 SET time_zone = '+00:00';
