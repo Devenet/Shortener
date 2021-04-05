@@ -137,6 +137,14 @@ else if (!empty($_GET['c']))
 
 $s->assign('newlink', isset($_GET['new']));
   
+// Search
+if (!empty($_GET['search']))
+{
+  $search = htmlspecialchars($_GET['search']);
+  $s->search($search);
+  $s->assign('search', $search);
+}
+
 $links_count = $s->countLinks();
 $last_page = Shortener::getLastPage($links_count);
 

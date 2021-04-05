@@ -1,7 +1,6 @@
 <?php
 
 use Core\Shortener;
-use Core\UserAgent;
 
 require dirname(__FILE__) . '/core/autoload.php';
 

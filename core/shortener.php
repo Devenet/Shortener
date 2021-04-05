@@ -14,13 +14,15 @@ use PDO;
 
 class Shortener
 {
-  public const VERSION = '1.1.0';
+  public const VERSION = '1.2.0';
   public const PAGINATION = 15;
 
   private $template;
   private $domain;
   private $domain_scheme;
   private $default_length;
+
+  private $search = null;
 
   function __construct()
   {
@@ -29,7 +31,7 @@ class Shortener
     $theme = $config['theme'] ?? null;
     if (!empty($theme))
     {
-      RainTPL::$tpl_dir = 'themes/' . $theme . '/';
+      RainTPL::$tpl_dir = 'themes/' . $theme . '/templates/';
     }
 
     $this->default_length = $config['default_code_length'] ?? 6;
@@ -46,6 +48,11 @@ class Shortener
   public function getDomain()
   {
     return $this->domain;
+  }
+
+  public function search($search)
+  {
+    $this->search = '%'.$search.'%';
   }
 
   public function addLink($code, $url, $disable, $comment, $generator_settings)
@@ -91,7 +98,13 @@ class Shortener
   }
   public function countLinks()
   {
-    $query = Db::Instance()->query('select count(id) as total from shtnr_link');
+    $query = Db::Instance()->prepare('select count(id) as total from shtnr_link');
+    if (!empty($this->search))
+    {
+      $query = Db::Instance()->prepare('select count(id) as total from shtnr_link where code like :s or url like :s');
+      $query->bindValue('s', $this->search);
+    }
+    $query->execute();
     $data = $query->fetch();
     $query->closeCursor();
 
@@ -125,6 +138,15 @@ class Shortener
       from shtnr_link l left outer join shtnr_view v on l.id = v.link_id
       group by l.id order by l.created desc
       limit :offset, :pagination');
+    if (!empty($this->search))
+    {
+      $query = Db::Instance()->prepare('select l.id, l.created, l.code, l.url, l.disable, l.comment, count(v.id) as views
+        from shtnr_link l left outer join shtnr_view v on l.id = v.link_id
+        where l.code like :s or l.url like :s
+        group by l.id order by l.created desc
+        limit :offset, :pagination');
+      $query->bindValue('s', $this->search);
+    }
     $query->bindValue('offset', $page * self::PAGINATION, PDO::PARAM_INT);
     $query->bindValue('pagination', self::PAGINATION, PDO::PARAM_INT);
     $query->execute();

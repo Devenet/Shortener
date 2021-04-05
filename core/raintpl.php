@@ -13,11 +13,11 @@ namespace Core;
 
 class RainTPL
 {
-  static $tpl_dir = "themes/default/";
+  static $tpl_dir = "themes/default/templates/";
   static $cache_dir = "themes/cache/";
   static $base_url = null;
   static $tpl_ext = "html";
-  static $path_replace = true;
+  static $path_replace = false;
   static $path_replace_list = array( /*'a', 'img',*/ 'link', 'script', 'input');
   static $black_list = array('\$this', 'raintpl::', 'self::', '_SESSION', '_SERVER', '_ENV',  'eval', 'exec', 'unlink', 'rmdir');
   static $check_template_update = true;
