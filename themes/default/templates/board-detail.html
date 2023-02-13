@@ -62,6 +62,22 @@
 
     <form method="post" action="board.php?c={$link['code']}" class="border border-1 rounded my-3 p-3">
       <div class="row mb-3">
+        <label class="col-md-2 col-form-label" for="code">
+          Alias
+          <a href="{$domain_scheme}://{$domain}/{$link['code']}" rel="external" class="ms-1 align-text-bottom float-md-end">
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-external-link"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+          </a>
+        </label>
+        <div class="col">
+          <div class="input-group">
+            <span class="input-group-text">{$domain}/</span>
+            <input class="form-control font-monospace" type="text" name="code" id="code" maxlength="50" value="{$link['code']}" readonly>
+            <button class="btn btn-outline-primary" id="btn_copy" type="button" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-container="body" data-bs-original-title="">Copy link</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="row mb-3">
         <label class="col-md-2 col-form-label" for="url">
           URL
           <a href="{$link['url']}" rel="external" class="ms-1 align-text-bottom float-md-end">
@@ -76,22 +92,6 @@
             {if="isset($errors['url_confirmation'])"}<div class="form-check"><input class="form-check-input" type="checkbox" id="force_url" name="force_url"> <label class="form-check-label" for="force_url">Continue anyway</label></div>{/if}
           </div>
           {/if}
-        </div>
-      </div>
-
-      <div class="row mb-3">
-        <label class="col-md-2 col-form-label" for="code">
-          Alias
-          <a href="{$domain_scheme}://{$domain}/{$link['code']}" rel="external" class="ms-1 align-text-bottom float-md-end">
-            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-external-link"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
-          </a>
-        </label>
-        <div class="col">
-          <div class="input-group">
-            <span class="input-group-text">{$domain}/</span>
-            <input class="form-control font-monospace" type="text" name="code" id="code" maxlength="50" value="{$link['code']}" readonly>
-            <button class="btn btn-outline-primary" id="btn_copy" type="button" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-container="body" data-bs-original-title="">Copy link</button>
-          </div>
         </div>
       </div>
 
