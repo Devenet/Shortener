@@ -52,6 +52,13 @@ if (!empty($_GET['c']))
   }
   else
   {
+    $link = $s->getActiveLink('404');
+    if ($link)
+    {
+      header('Location: ' . $link['url']);
+      exit;
+    }
+
     http_response_code(404);
     $s->draw(404);
     exit;
