@@ -1,4 +1,4 @@
-/* v1.1.0 */
+/* v1.3.0 */
 
 SET NAMES utf8;
 SET time_zone = '+00:00';
@@ -19,7 +19,7 @@ CREATE TABLE `shtnr_link` (
   KEY `disable` (`disable`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
-INSERT INTO `shtnr_link` (`id`, `created`, `code`, `url`, `disable`, `comment`) VALUES (1,	current_timestamp,	'default',	'https://github.com/Devenet/Shortener',	1,	'This specific “default” alias, when enabled, redirects the Shortener homepage to the specified URL.');
+INSERT INTO `shtnr_link` (`id`, `created`, `code`, `url`, `disable`, `comment`) VALUES (1,	current_timestamp,	'default',	'https://github.com/Devenet/Shortener',	1,	'When enabled, this specific “default“ alias redirects the Shortener homepage to the associated URL.');
 
 CREATE TABLE `shtnr_view` (
   `id` int(11) NOT NULL AUTO_INCREMENT,

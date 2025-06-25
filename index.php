@@ -73,4 +73,5 @@ if ($link)
 }
 
 $s->assign('time', time());
+$s->assign('domain', $s->getDomain());
 $s->draw('default');

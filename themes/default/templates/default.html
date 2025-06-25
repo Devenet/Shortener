@@ -9,7 +9,7 @@
   <meta name="generator" content="Shortener (v{$version}) by Nicolas Devenet">
   <meta name="robots" content="noindex, nofollow, noarchive">
 
-  <title>Welcome · Shortener</title>
+  <title>Shortener</title>
 
   <link rel="icon" type="image/png" href="themes/default/favicon/favicon-96x96.png" sizes="96x96">
   <link rel="icon" type="image/svg+xml" href="themes/default/favicon/favicon.svg">
@@ -26,7 +26,6 @@
       </button>
       <div class="collapse navbar-collapse" id="navbar">
         <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-          <li class="nav-item"><a class="nav-link active" href=".">Home</a></li>
           <li class="nav-item"><a class="nav-link" href="dashboard.php">Dashboard</a></li>
         </ul>
         <small class="navbar-text">Powered by <a href="https://github.com/Devenet/Shortener" rel="external" data-version="v{$version}">Shortener</a></small>
@@ -35,8 +34,9 @@
   </nav>
 
   <main class="container mb-4">
-    <h1 class="my-2">Welcome</h1>
-    <p class="lead">This is a self hosted instance of Shortener, a light web application to shorten links.</p>
+    <h1 class="my-2">{$domain}</h1>
+    <p class="lead">This is a self instance of Shortener.</p>
+    <p class="mt-5">Shortener is a light web application to shorten links and share them easily.</p>
   </main>
 
   <script src="themes/default/assets/bootstrap.bundle.min.js"></script>
