@@ -14,7 +14,7 @@ if (isset($_GET['new']) && !empty($_POST) && !empty($_POST['url']))
     → https://github.com/mathiasbynens/php-url-shortener/blob/master/shorten.php
     → https://www.codexworld.com/php-url-shortener-library-create-short-url/
   */
-  
+
   $url = htmlspecialchars(trim($_POST['url']));
   $code = htmlspecialchars(trim($_POST['code'] ?? null));
   $code_easy = isset($_POST['easy']) && $_POST['easy'] == "on";
@@ -25,7 +25,7 @@ if (isset($_GET['new']) && !empty($_POST) && !empty($_POST['url']))
   $code_length = $_POST['length'] + 0;
   $comment = htmlspecialchars(trim($_POST['comment']));
   $disable = isset($_POST['disable']) && $_POST['disable'] == "on";
-  
+
   $code_chars = [];
   if ($chars_lower) { $code_chars[] = Generator::CHARS_LOWER; }
   if ($chars_upper) { $code_chars[] = Generator::CHARS_UPPER; }
@@ -33,18 +33,18 @@ if (isset($_GET['new']) && !empty($_POST) && !empty($_POST['url']))
   if ($chars_symbols) { $code_chars[] = Generator::CHARS_SYMBOLS; }
 
   $errors = array();
-  
+
   checkGivenUrl($url, $s, $errors);
   checkGivenCode($code, $s, $code_length, $code_chars, $errors);
   checkGivenComment($errors);
-  
+
   if (empty($errors))
   {
     try
     {
       $code = $s->addLink($code, $url, $disable, $comment, ['length' => $code_length, 'easyToRead' => $code_easy, 'chars' => array_sum($code_chars)]);
-      
-      header('Location: board.php?c='.$code);
+
+      header('Location: dashboard.php?c='.$code);
       exit;
     }
     catch (\Exception $e)
@@ -72,7 +72,7 @@ else if (!empty($_GET['c']))
 {
   $code = htmlspecialchars(trim($_GET['c']));
   $link = $s->getLink($code);
-  
+
   if ($link)
   {
     // Edit link
@@ -81,7 +81,7 @@ else if (!empty($_GET['c']))
       if (!empty($_POST['delete']) && $_POST['delete'] == md5($link['code']))
       {
         $s->deleteLink($link['id']);
-        header('Location: board.php');
+        header('Location: dashboard.php');
         exit;
       }
 
@@ -96,8 +96,8 @@ else if (!empty($_GET['c']))
       if (empty($errors))
       {
         $s->updateLink($link['id'], $url, $disable, $comment);
-        header('Location: board.php?c='.$link['code'].'&updated');
-        exit;	
+        header('Location: dashboard.php?c='.$link['code'].'&updated');
+        exit;
       }
 
       $s->assign('errors', $errors);
@@ -110,13 +110,13 @@ else if (!empty($_GET['c']))
 
     $views_count = $s->countViews($link['id']);
     $last_page = Shortener::getLastPage($views_count['total']);
-    
+
     $page = 0;
     if (!empty($_GET['page']) && is_int($_GET['page']+0) && $_GET['page'] <= $last_page)
       $page = $_GET['page']+0;
-    
-    $views = $s->getViews($page, $link['id']);
-    
+
+    $views = $s->getViews($link['id'], $page);
+
     $s->assign('link', $link);
     $s->assign('views_count', $views_count['total']);
     $s->assign('views_unique_count', $views_count['unique']);
@@ -128,7 +128,7 @@ else if (!empty($_GET['c']))
     $s->draw('board-detail');
     exit;
   }
-  
+
   http_response_code(404);
   $s->assign('display_menu', true);
   $s->draw(404);
@@ -136,7 +136,7 @@ else if (!empty($_GET['c']))
 }
 
 $s->assign('newlink', isset($_GET['new']));
-  
+
 // Search
 if (!empty($_GET['search']))
 {
@@ -198,7 +198,7 @@ function checkGivenUrl($url, $s, &$errors, $excludedId = null)
   }
   else if (count($duplicatedLinks) > 0 && !isset($_POST['force_url']))
   {
-    $links_code = implode(', ', array_map(function($link) { global $s; return '<a href="board.php?c='.$link['code'].'">'.$s->getDomain().'/'.$link['code'].'</a>'; }, $duplicatedLinks));
+    $links_code = implode(', ', array_map(function($link) { global $s; return '<a href="dashboard.php?c='.$link['code'].'">'.$s->getDomain().'/'.$link['code'].'</a>'; }, $duplicatedLinks));
     $errors['url'] = 'URL is already shorten with '.$links_code.'.';
     $errors['url_confirmation'] = true;
   }
@@ -212,7 +212,7 @@ function checkGivenCode($code, $s, $code_length, $code_chars, &$errors)
     {
       $errors['length'] = 'Length must be between 3 and 50 charcaters.';
     }
-    
+
     if (count($code_chars) == 0)
     {
       $errors['chars'] = 'At least one type of characters must be selected.';
@@ -224,7 +224,7 @@ function checkGivenCode($code, $s, $code_length, $code_chars, &$errors)
     {
       $errors['code'] = 'Custom alias can not end with <kbd>.</kbd>, <kbd>,</kbd>, <kbd>(</kbd> or <kbd>)</kbd>.';
     }
-    
+
     $link = $s->getLink($code);
     if ($link)
     {

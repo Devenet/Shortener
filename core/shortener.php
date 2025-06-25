@@ -14,7 +14,7 @@ use PDO;
 
 class Shortener
 {
-  public const VERSION = '1.2.0';
+  public const VERSION = '1.3.0';
   public const PAGINATION = 15;
 
   private $template;
@@ -173,6 +173,8 @@ class Shortener
   {
     if (empty($id)) return;
 
+    $this->deleteViews($id);
+
     $query = Db::Instance()->prepare('delete from shtnr_link where id = ?');
     $query->execute(array($id));
     $query->closeCursor();
@@ -209,7 +211,7 @@ class Shortener
 
     return array('total' => $data['counts'], 'unique' => $data['unique_counts']);
   }
-  public function getViews($page = 0, $link_id)
+  public function getViews($link_id, $page = 0)
   {
     if (empty($link_id)) return null;
 
@@ -227,6 +229,14 @@ class Shortener
     $query->closeCursor();
 
     return $results;
+  }
+  private function deleteViews($link_id)
+  {
+    if (empty($link_id)) return;
+
+    $query = Db::Instance()->prepare('delete from shtnr_view where link_id = ?');
+    $query->execute(array($link_id));
+    $query->closeCursor();
   }
 
   public static function getLastPage($count)
@@ -263,7 +273,7 @@ class Shortener
   {
     if (self::EndsWith($content, '/') || self::EndsWith($content, '\\'))
       return substr($content, 0, -1);
-    
+
     return $content;
   }
 }

@@ -1,4 +1,4 @@
-<form method="post" action="board.php?new">
+<form method="post" action="dashboard.php?new">
   <div class="row mb-3">
     <label class="col-lg-2 col-form-label" for="url">URL</label>
     <div class="col">
@@ -7,11 +7,11 @@
       <div class="invalid-feedback">
         {$errors['url']}
         {if="isset($errors['url_confirmation'])"}<div class="form-check"><input class="form-check-input" type="checkbox" id="force_url" name="force_url"> <label class="form-check-label" for="force_url">Continue anyway</label></div>{/if}
-      </div>  
+      </div>
       {/if}
     </div>
   </div>
-  
+
   <div class="row mb-3">
     <label class="col-lg-2 col-form-label" for="code">Custom alias</label>
     <div class="col">
@@ -32,7 +32,7 @@
 
   <details class="row mb-4" {if="isset($errors['chars']) || isset($errors['length'])"}open{/if}>
     <summary class="col-auto offset-md-2">Alias settings</summary>
-    
+
     <div class="pt-3">
       <div class="row mb-2">
         <div class="col offset-md-2">
@@ -66,7 +66,7 @@
           {if="isset($errors['chars'])"}<div class="invalid-feedback">{$errors['chars']}</div>{/if}
         </div>
       </fieldset>
-      
+
       <div class="row align-items-center mb-3">
         <label class="col-md-2 col-form-label" for="length">Length</label>
         <div class="col-auto">
@@ -77,7 +77,7 @@
       </div>
     </div>
   </details>
-  
+
   <div class="row mb-3">
     <label class="col-md-2 col-form-label" for="comment">Comment</label>
     <div class="col">
@@ -85,7 +85,7 @@
       {if="isset($errors['comment'])"}<div class="invalid-feedback">{$errors['comment']}</div>{/if}
     </div>
   </div>
-  
+
   <div class="row align-items-center">
     <div class="col-auto offset-md-2">
       <button type="submit" class="btn btn-primary">Shorten</button>

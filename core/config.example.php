@@ -17,7 +17,7 @@ $config = [
   // 'database' => 'shortener',
   // 'user' => 'root',
   // 'password' => '',
-  
+
   /* Shortener settings */
   // 'domain' => 'shortdomain.tld',
   // 'default_code_length' => 6,

@@ -41,7 +41,7 @@ if (!empty($_GET['c']))
     }
     catch (\Exception $e)
     {
-      var_dump($e);
+      // var_dump($e);
     }
     finally
     {
@@ -52,6 +52,13 @@ if (!empty($_GET['c']))
   }
   else
   {
+    $link = $s->getActiveLink('404');
+    if ($link)
+    {
+      header('Location: ' . $link['url']);
+      exit;
+    }
+
     http_response_code(404);
     $s->draw(404);
     exit;
@@ -66,4 +73,5 @@ if ($link)
 }
 
 $s->assign('time', time());
+$s->assign('domain', $s->getDomain());
 $s->draw('default');

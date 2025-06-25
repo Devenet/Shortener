@@ -1,4 +1,4 @@
-/* v1.1.0 */
+/* v1.3.0 */
 
 CREATE TABLE "shtnr_link" (
   "id"	INTEGER NOT NULL UNIQUE,
@@ -10,7 +10,7 @@ CREATE TABLE "shtnr_link" (
   PRIMARY KEY("id" AUTOINCREMENT)
 );
 
-INSERT INTO `shtnr_link` (`id`, `created`, `code`, `url`, `disable`, `comment`) VALUES (1,	current_timestamp,	'default',	'https://github.com/Devenet/Shortener',	1,	'This specific “default” alias, when enabled, redirects the Shortener homepage to the specified URL.');
+INSERT INTO `shtnr_link` (`id`, `created`, `code`, `url`, `disable`, `comment`) VALUES (1,	current_timestamp,	'default',	'https://github.com/Devenet/Shortener',	1,	'When enabled, this specific “default“ alias redirects the Shortener homepage to the associated URL.');
 
 CREATE TABLE "shtnr_view" (
   "id"	INTEGER NOT NULL UNIQUE,
@@ -21,5 +21,5 @@ CREATE TABLE "shtnr_view" (
   "referer_host"	TEXT DEFAULT NULL,
   "user_agent"	TEXT DEFAULT NULL,
   PRIMARY KEY("id" AUTOINCREMENT)
-  FOREIGN KEY("link_id") REFERENCES "shtnr_link"("id") ON DELETE CASCADE 
+  FOREIGN KEY("link_id") REFERENCES "shtnr_link"("id") ON DELETE CASCADE
 );
