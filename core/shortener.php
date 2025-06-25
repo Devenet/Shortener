@@ -173,6 +173,8 @@ class Shortener
   {
     if (empty($id)) return;
 
+    $this->deleteViews($id);
+
     $query = Db::Instance()->prepare('delete from shtnr_link where id = ?');
     $query->execute(array($id));
     $query->closeCursor();
@@ -209,9 +211,10 @@ class Shortener
 
     return array('total' => $data['counts'], 'unique' => $data['unique_counts']);
   }
-  public function getViews($page = 0, $link_id)
+  public function getViews($page, $link_id)
   {
     if (empty($link_id)) return null;
+    $page += 0;
 
     $query = Db::Instance()->prepare('select id, created, ip_hash, referer_host, referer, user_agent
       from shtnr_view where link_id = :link_id order by created desc
@@ -227,6 +230,14 @@ class Shortener
     $query->closeCursor();
 
     return $results;
+  }
+  private function deleteViews($link_id)
+  {
+    if (empty($link_id)) return;
+
+    $query = Db::Instance()->prepare('delete from shtnr_view where link_id = ?');
+    $query->execute(array($link_id));
+    $query->closeCursor();
   }
 
   public static function getLastPage($count)
@@ -263,7 +274,7 @@ class Shortener
   {
     if (self::EndsWith($content, '/') || self::EndsWith($content, '\\'))
       return substr($content, 0, -1);
-    
+
     return $content;
   }
 }
