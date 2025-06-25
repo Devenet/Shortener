@@ -115,7 +115,7 @@ else if (!empty($_GET['c']))
     if (!empty($_GET['page']) && is_int($_GET['page']+0) && $_GET['page'] <= $last_page)
       $page = $_GET['page']+0;
 
-    $views = $s->getViews($page, $link['id']);
+    $views = $s->getViews($link['id'], $page);
 
     $s->assign('link', $link);
     $s->assign('views_count', $views_count['total']);

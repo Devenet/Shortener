@@ -41,7 +41,7 @@ if (!empty($_GET['c']))
     }
     catch (\Exception $e)
     {
-      var_dump($e);
+      // var_dump($e);
     }
     finally
     {

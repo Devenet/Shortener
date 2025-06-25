@@ -211,10 +211,9 @@ class Shortener
 
     return array('total' => $data['counts'], 'unique' => $data['unique_counts']);
   }
-  public function getViews($page, $link_id)
+  public function getViews($link_id, $page = 0)
   {
     if (empty($link_id)) return null;
-    $page += 0;
 
     $query = Db::Instance()->prepare('select id, created, ip_hash, referer_host, referer, user_agent
       from shtnr_view where link_id = :link_id order by created desc
