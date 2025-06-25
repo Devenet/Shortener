@@ -32,7 +32,7 @@
       <div class="collapse navbar-collapse" id="navbar">
         <ul class="navbar-nav me-auto mb-2 mb-lg-0">
           <li class="nav-item"><a class="nav-link" href=".">Home</a></li>
-          <li class="nav-item"><a class="nav-link active" href="board.php">Dashboard</a></li>
+          <li class="nav-item"><a class="nav-link active" href="dashboard.php">Dashboard</a></li>
         </ul>
         <small class="navbar-text">Powered by <a href="https://github.com/Devenet/Shortener" rel="external" data-version="v{$version}">Shortener</a></small>
       </div>
@@ -60,7 +60,7 @@
     </div>
     {/if}
 
-    <form method="post" action="board.php?c={$link['code']}" class="border border-1 rounded my-3 p-3">
+    <form method="post" action="dashboard.php?c={$link['code']}" class="border border-1 rounded my-3 p-3">
       <div class="row mb-3">
         <label class="col-md-2 col-form-label" for="code">
           Alias
